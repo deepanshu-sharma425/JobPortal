@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const crypto = require('crypto');
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
 
 const app = express();
 const prisma = new PrismaClient();
@@ -79,7 +80,7 @@ app.post('/api/auth/signup', async (req, res) => {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await prisma.user.create({
       data: { name, email, password: hashedPassword, role }
     });
