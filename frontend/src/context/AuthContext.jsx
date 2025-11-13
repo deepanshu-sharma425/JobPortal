@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = 'http://localhost:3001/api';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -40,7 +40,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+    const response = await axios.post(`${API_URL}/auth/login`, { email, password }, {
+      withCredentials: true
+    });
     const { token, user } = response.data;
     
     localStorage.setItem('token', token);
@@ -51,7 +53,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password, role) => {
-    const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password, role });
+    const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password, role }, {
+      withCredentials: true
+    });
     const { token, user } = response.data;
     
     localStorage.setItem('token', token);

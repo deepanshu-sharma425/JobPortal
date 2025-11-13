@@ -33,9 +33,11 @@ npm install
 
 3. Update `.env` file with your MongoDB connection string:
 ```
-DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/careerlink?retryWrites=true&w=majority"
+DATABASE_URL="mongodb+srv://deepanshu26:deepanshu26@jobportal.dtmtqnc.mongodb.net/JobPortal?appName=JobPortal"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 PORT=5000
+# Set to your frontend origin(s). Use a comma for multiple, or '*' to allow all (dev only).
+CLIENT_URL="http://localhost:5173"
 ```
 
 4. Generate Prisma client:
