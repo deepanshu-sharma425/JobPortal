@@ -35,7 +35,7 @@ npm install
 ```
 DATABASE_URL="mongodb+srv://deepanshu26:deepanshu26@jobportal.dtmtqnc.mongodb.net/JobPortal?appName=JobPortal"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
-PORT=5000
+PORT=5001
 # Set to your frontend origin(s). Use a comma for multiple, or '*' to allow all (dev only).
 CLIENT_URL="http://localhost:5173"
 ```
@@ -47,7 +47,7 @@ node generate.js
 
 5. Start the server:
 ```bash
-npm run dev
+PORT=5001 npm run dev
 ```
 
 ### Frontend Setup
@@ -62,7 +62,12 @@ cd frontend
 npm install
 ```
 
-3. Start the development server:
+3. Create a `.env` file (next to `vite.config.js`) with your API base URL:
+```
+VITE_API_URL="http://localhost:5001/api"
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
