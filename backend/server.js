@@ -95,6 +95,7 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Simpler signup for older frontends
 app.post('/signup', async (req, res) => {
   try {
@@ -117,6 +118,31 @@ app.post('/signup', async (req, res) => {
   } catch (error) {
     console.error('Error in /signup:', error);
     res.status(500).json({ success: false, message: 'Server error' });
+=======
+// Backwards-compatible signup route for frontends calling POST /signup
+app.post('/signup', async (req, res) => {
+  try {
+    console.log('Signup route working');
+    const { name, email, password, role = 'user' } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'All fields are required' });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    await prisma.user.create({ data: { name, email, password: hashedPassword, role } });
+
+    // Return the simple JSON shape requested by the frontend
+    return res.status(201).json({ success: true, message: 'User created' });
+  } catch (error) {
+    console.error('Error in /signup:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+>>>>>>> 88ed643 (changes)
   }
 });
 

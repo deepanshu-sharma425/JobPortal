@@ -1,8 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+<<<<<<< HEAD
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+=======
+import { API_URL } from '../config/api';
+>>>>>>> 88ed643 (changes)
 
 const AuthContext = createContext();
 
