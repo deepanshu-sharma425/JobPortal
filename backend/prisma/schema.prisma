@@ -16,3 +16,33 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Job {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  company     String
+  location    String
+  type        String // full-time, part-time, contract, remote
+  salary      String
+  description String
+  requirements String
+  postedBy    String @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Application {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  jobId     String @db.ObjectId
+  userId    String @db.ObjectId
+  coverLetter String?
+  status    String @default("pending") // pending, accepted, rejected
+  createdAt DateTime @default(now())
+}
+
+model SavedJob {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  jobId     String @db.ObjectId
+  userId    String @db.ObjectId
+  createdAt DateTime @default(now())
+}
