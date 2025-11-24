@@ -46,7 +46,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen bg-[#0D0F13] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20" />
+      <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(167,139,250,0.1),transparent_50%)]" />
 
       <motion.div
@@ -82,7 +82,7 @@ const Signup = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="John Doe"
+              placeholder="Your Name"
               required
             />
 

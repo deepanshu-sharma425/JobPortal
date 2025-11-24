@@ -307,6 +307,27 @@ app.delete('/api/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/jobs/posted/my', authenticateToken, async (req, res) => {
+  try {
+    const jobs = await prisma.job.findMany({
+      where: { postedBy: req.user.userId },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const jobsWithCounts = await Promise.all(
+      jobs.map(async (job) => {
+        const count = await prisma.application.count({ where: { jobId: job.id } });
+        return { ...job, applicationCount: count };
+      })
+    );
+
+    res.json(jobsWithCounts);
+  } catch (error) {
+    console.error('Error fetching posted jobs:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // =================== APPLICATION ROUTES ===================== //
 
 // Apply to a job
@@ -342,6 +363,70 @@ app.post('/api/jobs/:id/apply', authenticateToken, async (req, res) => {
     res.status(201).json({ ...application, job: jobDetails, user: applicant });
   } catch (error) {
     console.error('Error applying:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/jobs/:id/applications', authenticateToken, async (req, res) => {
+  try {
+    const job = await prisma.job.findUnique({ where: { id: req.params.id } });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    if (job.postedBy !== req.user.userId && req.user.role !== 'admin')
+      return res.status(403).json({ error: 'Not authorized' });
+
+    const applications = await prisma.application.findMany({
+      where: { jobId: req.params.id },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const detailed = await Promise.all(
+      applications.map(async (app) => {
+        const user = await prisma.user.findUnique({
+          where: { id: app.userId },
+          select: { id: true, name: true, email: true }
+        });
+        return { ...app, applicant: user };
+      })
+    );
+
+    res.json(detailed);
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.patch('/api/applications/:id', authenticateToken, async (req, res) => {
+  try {
+    const application = await prisma.application.findUnique({ where: { id: req.params.id } });
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+    const job = await prisma.job.findUnique({ where: { id: application.jobId } });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    if (job.postedBy !== req.user.userId && req.user.role !== 'admin')
+      return res.status(403).json({ error: 'Not authorized' });
+
+    const updated = await prisma.application.update({
+      where: { id: req.params.id },
+      data: { status: req.body.status || 'pending' }
+    });
+
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.delete('/api/applications/:id', authenticateToken, async (req, res) => {
+  try {
+    const application = await prisma.application.findUnique({ where: { id: req.params.id } });
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+    const job = await prisma.job.findUnique({ where: { id: application.jobId } });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    if (job.postedBy !== req.user.userId && req.user.role !== 'admin')
+      return res.status(403).json({ error: 'Not authorized' });
+
+    await prisma.application.delete({ where: { id: req.params.id } });
+    res.json({ message: 'Application deleted successfully' });
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });

@@ -8,7 +8,6 @@ import Modal from '../components/Modal';
 import JobForm from '../components/JobForm';
 import { Plus, Edit2, Trash2, Briefcase, Users } from 'lucide-react';
 import { API_URL } from '../config/apiConfig';
-
 const PosterDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);

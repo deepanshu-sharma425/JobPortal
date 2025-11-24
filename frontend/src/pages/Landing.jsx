@@ -26,33 +26,8 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-[#0D0F13] relative overflow-hidden">
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20 animate-pulse" />
+      <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20 animate-pulse" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,240,255,0.1),transparent_50%)]" />
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              opacity: 0
-            }}
-            animate={{
-              y: [null, Math.random() * window.innerHeight],
-              opacity: [0, 0.5, 0],
-              scale: [0, 1, 0]
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2
-            }}
-          />
-        ))}
-      </div>
 
       {/* Navigation */}
       <nav className="relative z-10 glass border-b border-white/10">
@@ -102,7 +77,7 @@ const Landing = () => {
             variants={itemVariants}
             className="text-5xl md:text-7xl font-bold mb-6"
           >
-            <span className="gradient-text">Find Your Dream Job</span>
+            <span className="text-white">Find Your Dream Job</span>
             <br />
             <span className="text-white">Or Post One</span>
           </motion.h1>
@@ -161,7 +136,7 @@ const Landing = () => {
               whileHover={{ y: -8, scale: 1.02 }}
               className="glass rounded-2xl p-8 text-center"
             >
-              <div className="inline-flex p-4 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 mb-4">
+              <div className="inline-flex p-4 rounded-xl bg-linear-to-br from-cyan-500/20 to-purple-500/20 mb-4">
                 <feature.icon className="w-8 h-8 text-cyan-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
