@@ -9,7 +9,7 @@ import Select from '../components/Select';
 import Modal from '../components/Modal';
 import JobDetail from '../components/JobDetail';
 import { Search, Filter, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Briefcase } from 'lucide-react';
-import { API_URL } from '../context/AuthContext';
+import { API_URL } from '../config/apiConfig';
 
 const EmployeeDashboard = () => {
   const [jobs, setJobs] = useState([]);

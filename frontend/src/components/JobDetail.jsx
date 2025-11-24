@@ -3,7 +3,7 @@ import axios from 'axios';
 import Button from './Button';
 import Textarea from './Textarea';
 import { MapPin, Briefcase, DollarSign, Bookmark, BookmarkCheck, Send } from 'lucide-react';
-import { API_URL } from '../context/AuthContext';
+import { API_URL } from '../config/apiConfig';
 
 const JobDetail = ({ job, isSaved, onSave, onClose }) => {
   const [coverLetter, setCoverLetter] = useState('');

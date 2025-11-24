@@ -4,7 +4,7 @@ import Button from './Button';
 import Input from './Input';
 import Textarea from './Textarea';
 import Select from './Select';
-import { API_URL } from '../context/AuthContext';
+import { API_URL } from '../config/apiConfig';
 
 const JobForm = ({ job, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
