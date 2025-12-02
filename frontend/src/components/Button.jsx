@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
 const Button = ({
@@ -15,11 +15,11 @@ const Button = ({
   const baseStyles = 'relative inline-flex items-center justify-center font-semibold rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0D0F13] disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-cyan-500 text-white hover:from-cyan-400 hover:to-teal-400 glow-hover focus:ring-cyan-500',
-    secondary: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-400 hover:to-pink-400 glow-purple hover:shadow-lg focus:ring-purple-500',
+    primary: 'bg-cyan-600 text-white hover:bg-cyan-500 focus:ring-cyan-500',
+    secondary: 'bg-purple-600 text-white hover:bg-purple-500 focus:ring-purple-500',
     outline: 'glass border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 focus:ring-cyan-500',
     ghost: 'glass text-gray-300 hover:bg-white/10 hover:text-white focus:ring-gray-500',
-    danger: 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-400 hover:to-pink-400 focus:ring-red-500'
+    danger: 'bg-red-600 text-white hover:bg-red-500 focus:ring-red-500'
   };
 
   const sizes = {
@@ -30,7 +30,7 @@ const Button = ({
   };
 
   return (
-    <motion.button
+    <Motion.button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
@@ -43,9 +43,8 @@ const Button = ({
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       )}
       {children}
-    </motion.button>
+    </Motion.button>
   );
 };
 
 export default Button;
-

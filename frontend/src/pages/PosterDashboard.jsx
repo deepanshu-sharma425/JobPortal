@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Card from '../components/Card';
@@ -13,6 +13,9 @@ const PosterDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
+  const [isApplicationsOpen, setIsApplicationsOpen] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [applicationsJob, setApplicationsJob] = useState(null);
 
   useEffect(() => {
     fetchJobs();
@@ -57,6 +60,35 @@ const PosterDashboard = () => {
     }
   };
 
+  const openApplications = async (job) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${API_URL}/jobs/${job.id}/applications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setApplications(res.data);
+      setApplicationsJob(job);
+      setIsApplicationsOpen(true);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      alert('Failed to load applications');
+    }
+  };
+
+  const updateApplicationStatus = async (applicationId, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${API_URL}/applications/${applicationId}`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setApplications((prev) => prev.map((a) => a.id === applicationId ? { ...a, status } : a));
+      fetchJobs();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status');
+    }
+  };
+
   const handleFormSuccess = () => {
     setIsCreateModalOpen(false);
     setEditingJob(null);
@@ -75,14 +107,14 @@ const PosterDashboard = () => {
     <div className="min-h-screen bg-[#0D0F13]">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-4xl font-bold gradient-text mb-2">My Job Posts</h1>
+              <h1 className="text-4xl font-bold text-white mb-2">My Job Posts</h1>
               <p className="text-gray-400">Manage your job listings</p>
             </div>
             <Button onClick={handleCreate} size="lg">
@@ -111,7 +143,7 @@ const PosterDashboard = () => {
               <div className="text-gray-400 text-sm">This Week</div>
             </Card>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {jobs.length === 0 ? (
           <Card className="text-center py-12">
@@ -121,7 +153,7 @@ const PosterDashboard = () => {
             <Button onClick={handleCreate}>Create Your First Job</Button>
           </Card>
         ) : (
-          <motion.div
+          <Motion.div
             initial="hidden"
             animate="visible"
             variants={{
@@ -134,7 +166,7 @@ const PosterDashboard = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {jobs.map((job) => (
-              <motion.div
+              <Motion.div
                 key={job.id}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
@@ -175,6 +207,15 @@ const PosterDashboard = () => {
                       <Trash2 className="w-4 h-4 mr-1" />
                       Delete
                     </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => openApplications(job)}
+                    >
+                      <Users className="w-4 h-4 mr-1" />
+                      Applications
+                    </Button>
                   </div>
                   {job.applicationCount > 0 && (
                     <div className="mt-2 text-sm text-cyan-400">
@@ -182,9 +223,9 @@ const PosterDashboard = () => {
                     </div>
                   )}
                 </Card>
-              </motion.div>
+              </Motion.div>
             ))}
-          </motion.div>
+          </Motion.div>
         )}
       </div>
 
@@ -206,9 +247,40 @@ const PosterDashboard = () => {
           }}
         />
       </Modal>
+
+      <Modal
+        isOpen={isApplicationsOpen}
+        onClose={() => {
+          setIsApplicationsOpen(false);
+          setApplicationsJob(null);
+          setApplications([]);
+        }}
+        title={applicationsJob ? `Applications - ${applicationsJob.title}` : 'Applications'}
+        size="lg"
+      >
+        {applications.length === 0 ? (
+          <div className="text-gray-400">No applications yet</div>
+        ) : (
+          <div className="space-y-4">
+            {applications.map((app) => (
+              <Card key={app.id} className="flex justify-between items-center">
+                <div>
+                  <div className="text-white font-semibold">{app.applicant?.name}</div>
+                  <div className="text-gray-400 text-sm">{app.applicant?.email}</div>
+                  <div className="text-gray-500 text-sm mt-2 whitespace-pre-wrap">{app.coverLetter}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-lg bg-white/10 text-gray-300 text-xs mr-2">{app.status}</span>
+                  <Button size="sm" variant="primary" onClick={() => updateApplicationStatus(app.id, 'accepted')}>Accept</Button>
+                  <Button size="sm" variant="danger" onClick={() => updateApplicationStatus(app.id, 'rejected')}>Reject</Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
 
 export default PosterDashboard;
-

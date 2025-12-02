@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Card from '../components/Card';
@@ -130,17 +130,17 @@ const EmployeeDashboard = () => {
     <div className="min-h-screen bg-[#0D0F13]">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold gradient-text mb-2">Explore Jobs</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Explore Jobs</h1>
           <p className="text-gray-400">Find your next opportunity</p>
-        </motion.div>
+        </Motion.div>
 
         {/* Filters */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -168,7 +168,7 @@ const EmployeeDashboard = () => {
               onChange={(e) => handleFilterChange('location', e.target.value)}
             />
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Jobs Grid */}
         {loading ? (
@@ -183,7 +183,7 @@ const EmployeeDashboard = () => {
           </Card>
         ) : (
           <>
-            <motion.div
+            <Motion.div
               initial="hidden"
               animate="visible"
               variants={{
@@ -197,7 +197,7 @@ const EmployeeDashboard = () => {
             >
               <AnimatePresence>
                 {jobs.map((job) => (
-                  <motion.div
+                  <Motion.div
                     key={job.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -241,14 +241,14 @@ const EmployeeDashboard = () => {
                         </Button>
                       </div>
                     </Card>
-                  </motion.div>
+                  </Motion.div>
                 ))}
               </AnimatePresence>
-            </motion.div>
+            </Motion.div>
 
             {/* Pagination */}
             {pagination.pages > 1 && (
-              <motion.div
+              <Motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="flex justify-center items-center gap-4"
@@ -296,7 +296,7 @@ const EmployeeDashboard = () => {
                   Next
                   <ChevronRight className="w-4 h-4" />
                 </Button>
-              </motion.div>
+              </Motion.div>
             )}
           </>
         )}
@@ -328,4 +328,3 @@ const EmployeeDashboard = () => {
 };
 
 export default EmployeeDashboard;
-

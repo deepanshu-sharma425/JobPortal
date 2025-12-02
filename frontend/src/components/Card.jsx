@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 const Card = ({
   children,
@@ -8,7 +8,7 @@ const Card = ({
   ...props
 }) => {
   return (
-    <motion.div
+    <Motion.div
       className={`glass rounded-2xl p-6 ${onClick ? 'cursor-pointer' : ''} ${className}`}
       whileHover={hover ? { y: -4, scale: 1.02 } : {}}
       transition={{ duration: 0.2 }}
@@ -16,9 +16,8 @@ const Card = ({
       {...props}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   );
 };
 
 export default Card;
-

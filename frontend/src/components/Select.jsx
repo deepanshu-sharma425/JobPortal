@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 const Select = ({
   label,
@@ -19,7 +19,7 @@ const Select = ({
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>
       )}
-      <motion.select
+      <Motion.select
         value={value}
         onChange={onChange}
         className={`w-full px-4 py-3 glass rounded-xl border border-white/10 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 bg-white/5 text-white ${className}`}
@@ -40,19 +40,18 @@ const Select = ({
             {option.label}
           </option>
         ))}
-      </motion.select>
+      </Motion.select>
       {error && (
-        <motion.p
+        <Motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-1 text-sm text-red-400"
         >
           {error}
-        </motion.p>
+        </Motion.p>
       )}
     </div>
   );
 };
 
 export default Select;
-

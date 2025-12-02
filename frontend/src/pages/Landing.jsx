@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Briefcase, Users, Zap, Sparkles } from 'lucide-react';
 import Button from '../components/Button';
@@ -24,23 +24,20 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0F13] relative overflow-hidden">
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20 animate-pulse" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,240,255,0.1),transparent_50%)]" />
+    <div className="min-h-screen bg-[#0D0F13] relative">
 
       {/* Navigation */}
       <nav className="relative z-10 glass border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-2xl font-bold gradient-text"
+              className="text-2xl font-bold text-white"
             >
               CareerLink
-            </motion.div>
-            <motion.div
+            </Motion.div>
+            <Motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex gap-4"
@@ -51,46 +48,46 @@ const Landing = () => {
               <Link to="/signup">
                 <Button variant="primary" size="sm">Get Started</Button>
               </Link>
-            </motion.div>
+            </Motion.div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <motion.div
+      <Motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32"
       >
-        <motion.div variants={itemVariants} className="text-center">
-          <motion.div
+        <Motion.div variants={itemVariants} className="text-center">
+          <Motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.3, type: 'spring' }}
             className="inline-block mb-6"
           >
             <Sparkles className="w-16 h-16 text-cyan-400" />
-          </motion.div>
+          </Motion.div>
           
-          <motion.h1
+          <Motion.h1
             variants={itemVariants}
             className="text-5xl md:text-7xl font-bold mb-6"
           >
             <span className="text-white">Find Your Dream Job</span>
             <br />
             <span className="text-white">Or Post One</span>
-          </motion.h1>
+          </Motion.h1>
 
-          <motion.p
+          <Motion.p
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto"
           >
             Connect talented professionals with amazing opportunities. 
             Built for the future of work.
-          </motion.p>
+          </Motion.p>
 
-          <motion.div
+          <Motion.div
             variants={itemVariants}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
@@ -105,11 +102,11 @@ const Landing = () => {
                 Sign In
               </Button>
             </Link>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
 
         {/* Features Grid */}
-        <motion.div
+        <Motion.div
           variants={containerVariants}
           className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8"
         >
@@ -130,24 +127,23 @@ const Landing = () => {
               description: 'Modern, responsive design with smooth animations and instant updates.'
             }
           ].map((feature, index) => (
-            <motion.div
+            <Motion.div
               key={index}
               variants={itemVariants}
               whileHover={{ y: -8, scale: 1.02 }}
               className="glass rounded-2xl p-8 text-center"
             >
-              <div className="inline-flex p-4 rounded-xl bg-linear-to-br from-cyan-500/20 to-purple-500/20 mb-4">
+              <div className="inline-flex p-4 rounded-xl bg-black/40 mb-4">
                 <feature.icon className="w-8 h-8 text-cyan-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
               <p className="text-gray-400">{feature.description}</p>
-            </motion.div>
+            </Motion.div>
           ))}
-        </motion.div>
-      </motion.div>
+        </Motion.div>
+      </Motion.div>
     </div>
   );
 };
 
 export default Landing;
-

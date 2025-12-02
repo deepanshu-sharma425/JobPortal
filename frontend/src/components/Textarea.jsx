@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 const Textarea = ({
   label,
@@ -19,7 +19,7 @@ const Textarea = ({
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>
       )}
-      <motion.textarea
+      <Motion.textarea
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -29,17 +29,16 @@ const Textarea = ({
         {...props}
       />
       {error && (
-        <motion.p
+        <Motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-1 text-sm text-red-400"
         >
           {error}
-        </motion.p>
+        </Motion.p>
       )}
     </div>
   );
 };
 
 export default Textarea;
-

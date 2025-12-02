@@ -401,16 +401,29 @@ app.patch('/api/applications/:id', authenticateToken, async (req, res) => {
     if (!application) return res.status(404).json({ error: 'Application not found' });
     const job = await prisma.job.findUnique({ where: { id: application.jobId } });
     if (!job) return res.status(404).json({ error: 'Job not found' });
-    if (job.postedBy !== req.user.userId && req.user.role !== 'admin')
+
+    // Applicant editing own cover letter
+    if (application.userId === req.user.userId) {
+      const updated = await prisma.application.update({
+        where: { id: req.params.id },
+        data: { coverLetter: req.body.coverLetter ?? application.coverLetter }
+      });
+      return res.json(updated);
+    }
+
+    // Poster/admin updating application status
+    if (job.postedBy !== req.user.userId && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Not authorized' });
+    }
 
     const updated = await prisma.application.update({
       where: { id: req.params.id },
-      data: { status: req.body.status || 'pending' }
+      data: { status: req.body.status || application.status }
     });
 
     res.json(updated);
-  } catch {
+  } catch (error) {
+    console.error('Error updating application:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -421,12 +434,15 @@ app.delete('/api/applications/:id', authenticateToken, async (req, res) => {
     if (!application) return res.status(404).json({ error: 'Application not found' });
     const job = await prisma.job.findUnique({ where: { id: application.jobId } });
     if (!job) return res.status(404).json({ error: 'Job not found' });
-    if (job.postedBy !== req.user.userId && req.user.role !== 'admin')
-      return res.status(403).json({ error: 'Not authorized' });
+
+    const isPoster = job.postedBy === req.user.userId || req.user.role === 'admin';
+    const isApplicant = application.userId === req.user.userId;
+    if (!isPoster && !isApplicant) return res.status(403).json({ error: 'Not authorized' });
 
     await prisma.application.delete({ where: { id: req.params.id } });
     res.json({ message: 'Application deleted successfully' });
-  } catch {
+  } catch (error) {
+    console.error('Error deleting application:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

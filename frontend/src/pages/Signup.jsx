@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -49,13 +49,13 @@ const Signup = () => {
       <div className="absolute inset-0 bg-linear-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(167,139,250,0.1),transparent_50%)]" />
 
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md relative z-10"
       >
-        <motion.div
+        <Motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -63,15 +63,15 @@ const Signup = () => {
         >
           {/* Logo */}
           <div className="text-center mb-8">
-            <motion.div
+            <Motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.3, type: 'spring' }}
               className="inline-block mb-4"
             >
               <Sparkles className="w-12 h-12 text-cyan-400" />
-            </motion.div>
-            <h1 className="text-3xl font-bold gradient-text mb-2">Create Account</h1>
+            </Motion.div>
+            <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
             <p className="text-gray-400">Join CareerLink today</p>
           </div>
 
@@ -116,13 +116,13 @@ const Signup = () => {
             />
 
             {error && (
-              <motion.div
+              <Motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="p-3 rounded-xl bg-red-500/20 border border-red-500/50 text-red-400 text-sm"
               >
                 {error}
-              </motion.div>
+              </Motion.div>
             )}
 
             <Button
@@ -150,8 +150,8 @@ const Signup = () => {
               ← Back to home
             </Link>
           </div>
-        </motion.div>
-      </motion.div>
+        </Motion.div>
+      </Motion.div>
     </div>
   );
 };

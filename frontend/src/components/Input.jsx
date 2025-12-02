@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 const Input = ({
   label,
@@ -24,7 +24,7 @@ const Input = ({
         {Icon && (
           <Icon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         )}
-        <motion.input
+        <Motion.input
           type={type}
           value={value}
           onChange={onChange}
@@ -35,17 +35,16 @@ const Input = ({
         />
       </div>
       {error && (
-        <motion.p
+        <Motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-1 text-sm text-red-400"
         >
           {error}
-        </motion.p>
+        </Motion.p>
       )}
     </div>
   );
 };
 
 export default Input;
-

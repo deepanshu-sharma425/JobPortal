@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -25,14 +25,14 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -41,7 +41,7 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
             >
               {title && (
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
-                  <h2 className="text-2xl font-bold gradient-text">{title}</h2>
+                  <h2 className="text-2xl font-bold text-white">{title}</h2>
                   <button
                     onClick={onClose}
                     className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -51,8 +51,8 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
                 </div>
               )}
               <div className="p-6">{children}</div>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         </>
       )}
     </AnimatePresence>
@@ -60,4 +60,3 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
 };
 
 export default Modal;
-

@@ -13,15 +13,22 @@ const Navbar = () => {
   };
 
   return (
-    <nav className=" glass border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
+    <nav className=" glass border-b border-white/10 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/dashboard" className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-cyan-400" />
-            <span className="text-xl font-bold gradient-text">CareerLink</span>
+            <span className="text-xl font-bold text-white">CareerLink</span>
           </Link>
 
           <div className="flex items-center gap-4">
+            {user && user.role !== 'admin' && user.role !== 'poster' && (
+              <Link to="/applications" className="text-sm text-gray-300 hover:text-white">
+                My Applications
+              </Link>
+            )}
+            <Link to="/reviews" className="text-sm text-gray-300 hover:text-white">Reviews</Link>
+            <Link to="/testimonials" className="text-sm text-gray-300 hover:text-white">Testimonials</Link>
             <div className="flex items-center gap-2 px-4 py-2 glass rounded-xl">
               <User className="w-4 h-4 text-gray-400" />
               <span className="text-sm text-gray-300">{user?.name}</span>
@@ -41,4 +48,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
