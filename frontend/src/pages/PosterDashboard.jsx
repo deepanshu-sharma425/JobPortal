@@ -6,7 +6,9 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import JobForm from '../components/JobForm';
-import { Plus, Edit2, Trash2, Briefcase, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, Briefcase, Users, ChevronLeft, ChevronRight, Search, Filter } from 'lucide-react';
+import Input from '../components/Input';
+import Select from '../components/Select';
 import { API_URL } from '../config/apiConfig';
 const PosterDashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -17,34 +19,51 @@ const PosterDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [applicationsJob, setApplicationsJob] = useState(null);
   const [page, setPage] = useState(1);
-  // Show exactly 3 jobs per page
-  const pageSize = 3;
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [sort, setSort] = useState('newest');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 3,
+    total: 0,
+    pages: 0
+  });
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [page, search, typeFilter, sort]);
 
   const fetchJobs = async () => {
     try {
       const token = localStorage.getItem('token');
+      const params = {
+        page,
+        limit: pagination.limit,
+        ...(search && { search }),
+        ...(typeFilter && { type: typeFilter }),
+        ...(locationFilter && { location: locationFilter }),
+        sort
+      };
+
       const response = await axios.get(`${API_URL}/jobs/posted/my`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        params
       });
-      setJobs(response.data);
+
+      setJobs(response.data.jobs || []);
+      setPagination(prev => ({
+        ...prev,
+        page: response.data.pagination.page,
+        total: response.data.pagination.total,
+        pages: response.data.pagination.pages
+      }));
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    // Ensure current page is always within valid range when jobs change
-    const maxPage = Math.max(1, Math.ceil(jobs.length / pageSize) || 1);
-    if (page > maxPage) {
-      setPage(maxPage);
-    }
-  }, [jobs.length, page]);
 
   const handleCreate = () => {
     setEditingJob(null);
@@ -106,13 +125,8 @@ const PosterDashboard = () => {
     fetchJobs();
   };
 
-  const totalPages = Math.ceil(jobs.length / pageSize) || 1;
-  const startIndex = (page - 1) * pageSize;
-  const endIndex = Math.min(startIndex + pageSize, jobs.length);
-  const paginatedJobs = jobs.slice(startIndex, endIndex);
-
   const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) return;
+    if (newPage < 1 || newPage > pagination.pages) return;
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -145,7 +159,65 @@ const PosterDashboard = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* Filters & Sort (same behavior as job seeker dashboard) */}
+          <div className="glass rounded-2xl p-6">
+            <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Filter className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-lg font-semibold text-white">Filters</h3>
+              </div>
+              <div className="w-full sm:w-48">
+                <Select
+                  label=""
+                  value={sort}
+                  onChange={(e) => {
+                    setSort(e.target.value);
+                    setPage(1);
+                  }}
+                  options={[
+                    { value: 'newest', label: 'Newly Added' },
+                    { value: 'oldest', label: 'Earlier Added' }
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                placeholder="Search jobs..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                icon={Search}
+              />
+              <Select
+                label=""
+                value={typeFilter}
+                onChange={(e) => {
+                  setTypeFilter(e.target.value);
+                  setPage(1);
+                }}
+                options={[
+                  { value: '', label: 'All Types' },
+                  { value: 'full-time', label: 'Full Time' },
+                  { value: 'part-time', label: 'Part Time' },
+                  { value: 'contract', label: 'Contract' },
+                  { value: 'remote', label: 'Remote' }
+                ]}
+              />
+              <Input
+                placeholder="Location..."
+                value={locationFilter}
+                onChange={(e) => {
+                  setLocationFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 mt-8">
             <Card className="text-center">
               <Briefcase className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
               <div className="text-3xl font-bold text-white">{jobs.length}</div>
@@ -187,7 +259,7 @@ const PosterDashboard = () => {
             }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
           >
-            {paginatedJobs.map((job) => (
+            {jobs.map((job) => (
               <Motion.div
                 key={job.id}
                 variants={{
@@ -250,7 +322,7 @@ const PosterDashboard = () => {
           </Motion.div>
         )}
 
-        {totalPages > 1 && (
+        {pagination.pages > 1 && (
           <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -266,11 +338,11 @@ const PosterDashboard = () => {
               Previous
             </Button>
             <div className="flex gap-2">
-              {[...Array(totalPages)].map((_, i) => {
+              {[...Array(pagination.pages)].map((_, i) => {
                 const p = i + 1;
                 if (
                   p === 1 ||
-                  p === totalPages ||
+                  p === pagination.pages ||
                   (p >= page - 1 && p <= page + 1)
                 ) {
                   return (
@@ -298,7 +370,7 @@ const PosterDashboard = () => {
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPages}
+              disabled={page === pagination.pages}
             >
               Next
               <ChevronRight className="w-4 h-4" />

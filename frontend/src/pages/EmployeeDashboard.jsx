@@ -21,6 +21,7 @@ const EmployeeDashboard = () => {
     type: '',
     location: ''
   });
+  const [sort, setSort] = useState('newest');
   const [pagination, setPagination] = useState({
     page: 1,
     // Show 3 jobs per page so seekers always see pagination when there are more results
@@ -33,7 +34,7 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     fetchJobs();
     fetchSavedJobs();
-  }, [pagination.page, filters]);
+  }, [pagination.page, filters, sort]);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -43,11 +44,12 @@ const EmployeeDashboard = () => {
         limit: pagination.limit,
         ...(filters.search && { search: filters.search }),
         ...(filters.type && { type: filters.type }),
-        ...(filters.location && { location: filters.location })
+        ...(filters.location && { location: filters.location }),
+        sort
       };
 
       const response = await axios.get(`${API_URL}/jobs`, { params });
-      setJobs(response.data.jobs);
+      setJobs(response.data.jobs || []);
       setPagination(prev => ({
         ...prev,
         total: response.data.pagination.total,
@@ -140,16 +142,32 @@ const EmployeeDashboard = () => {
           <p className="text-gray-400">Find your next opportunity</p>
         </Motion.div>
 
-        {/* Filters */}
+        {/* Filters & Sort */}
         <Motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="glass rounded-2xl p-6 mb-8"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-lg font-semibold text-white">Filters</h3>
+          <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-cyan-400" />
+              <h3 className="text-lg font-semibold text-white">Filters</h3>
+            </div>
+            <div className="w-full sm:w-48">
+              <Select
+                label=""
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
+                  setPagination(prev => ({ ...prev, page: 1 }));
+                }}
+                options={[
+                  { value: 'newest', label: 'Newly Added' },
+                  { value: 'oldest', label: 'Earlier Added' }
+                ]}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input

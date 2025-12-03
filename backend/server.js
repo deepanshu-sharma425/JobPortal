@@ -172,7 +172,7 @@ app.get('/api/jobs', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const { type, location, search } = req.query;
+    const { type, location, search, sort } = req.query;
 
     const where = {};
     if (type) where.type = type;
@@ -185,12 +185,17 @@ app.get('/api/jobs', async (req, res) => {
       ];
     }
 
+    const orderBy =
+      sort === 'oldest'
+        ? { createdAt: 'asc' }
+        : { createdAt: 'desc' }; // default newest first
+
     const [jobs, total] = await Promise.all([
       prisma.job.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }
+        orderBy
       }),
       prisma.job.count({ where })
     ]);
@@ -309,10 +314,38 @@ app.delete('/api/jobs/:id', authenticateToken, async (req, res) => {
 
 app.get('/api/jobs/posted/my', authenticateToken, async (req, res) => {
   try {
-    const jobs = await prisma.job.findMany({
-      where: { postedBy: req.user.userId },
-      orderBy: { createdAt: 'desc' }
-    });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const { type, search, location, sort } = req.query;
+
+    const where = { postedBy: req.user.userId };
+    if (type) where.type = type;
+    if (location) {
+      where.location = { contains: location, mode: 'insensitive' };
+    }
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { company: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
+    const orderBy =
+      sort === 'oldest'
+        ? { createdAt: 'asc' }
+        : { createdAt: 'desc' }; // default newest first
+
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy
+      }),
+      prisma.job.count({ where })
+    ]);
 
     const jobsWithCounts = await Promise.all(
       jobs.map(async (job) => {
@@ -321,7 +354,15 @@ app.get('/api/jobs/posted/my', authenticateToken, async (req, res) => {
       })
     );
 
-    res.json(jobsWithCounts);
+    res.json({
+      jobs: jobsWithCounts,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     console.error('Error fetching posted jobs:', error);
     res.status(500).json({ error: 'Server error' });
