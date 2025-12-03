@@ -6,7 +6,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import JobForm from '../components/JobForm';
-import { Plus, Edit2, Trash2, Briefcase, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, Briefcase, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { API_URL } from '../config/apiConfig';
 const PosterDashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -16,6 +16,9 @@ const PosterDashboard = () => {
   const [isApplicationsOpen, setIsApplicationsOpen] = useState(false);
   const [applications, setApplications] = useState([]);
   const [applicationsJob, setApplicationsJob] = useState(null);
+  const [page, setPage] = useState(1);
+  // Show exactly 3 jobs per page
+  const pageSize = 3;
 
   useEffect(() => {
     fetchJobs();
@@ -34,6 +37,14 @@ const PosterDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Ensure current page is always within valid range when jobs change
+    const maxPage = Math.max(1, Math.ceil(jobs.length / pageSize) || 1);
+    if (page > maxPage) {
+      setPage(maxPage);
+    }
+  }, [jobs.length, page]);
 
   const handleCreate = () => {
     setEditingJob(null);
@@ -93,6 +104,17 @@ const PosterDashboard = () => {
     setIsCreateModalOpen(false);
     setEditingJob(null);
     fetchJobs();
+  };
+
+  const totalPages = Math.ceil(jobs.length / pageSize) || 1;
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, jobs.length);
+  const paginatedJobs = jobs.slice(startIndex, endIndex);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -163,9 +185,9 @@ const PosterDashboard = () => {
                 }
               }
             }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
           >
-            {jobs.map((job) => (
+            {paginatedJobs.map((job) => (
               <Motion.div
                 key={job.id}
                 variants={{
@@ -225,6 +247,62 @@ const PosterDashboard = () => {
                 </Card>
               </Motion.div>
             ))}
+          </Motion.div>
+        )}
+
+        {totalPages > 1 && (
+          <Motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-center items-center gap-4"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </Button>
+            <div className="flex gap-2">
+              {[...Array(totalPages)].map((_, i) => {
+                const p = i + 1;
+                if (
+                  p === 1 ||
+                  p === totalPages ||
+                  (p >= page - 1 && p <= page + 1)
+                ) {
+                  return (
+                    <Button
+                      key={p}
+                      variant={page === p ? 'primary' : 'ghost'}
+                      size="sm"
+                      onClick={() => handlePageChange(p)}
+                      className="min-w-[40px]"
+                    >
+                      {p}
+                    </Button>
+                  );
+                } else if (p === page - 2 || p === page + 2) {
+                  return (
+                    <span key={p} className="text-gray-500">
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </Button>
           </Motion.div>
         )}
       </div>

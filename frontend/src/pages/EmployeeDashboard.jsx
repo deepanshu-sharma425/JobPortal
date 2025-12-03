@@ -23,7 +23,8 @@ const EmployeeDashboard = () => {
   });
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    // Show 3 jobs per page so seekers always see pagination when there are more results
+    limit: 3,
     total: 0,
     pages: 0
   });
